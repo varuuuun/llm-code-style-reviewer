@@ -1,0 +1,99 @@
+# ===== Control structures formatting =====
+- id: JAVA_IF_SPACING
+  description: "Control keywords should have a space after the keyword and properly spaced parentheses"
+  applies_to: control_statement
+  severity: minor
+  message: "Add a space after 'if' and ensure proper spacing around parentheses."
+
+- id: JAVA_INDENTATION
+  description: "Statements inside a block should be indented"
+  applies_to: block
+  severity: minor
+  message: "Method body should be indented."
+
+# ===== Braces style =====
+- id: JAVA_BRACE_SAME_LINE
+  description: "Opening braces should be on the same line as the declaration or statement"
+  applies_to: brace
+  severity: minor
+  message: "Opening brace should be on the same line as the statement."
+
+# ===== Operator and punctuation spacing =====
+- id: JAVA_OPERATOR_SPACING_ASSIGNMENT
+  description: "Binary operators should have spaces around them"
+  applies_to: operator
+  severity: minor
+  message: "Add spaces around '=' operator."
+
+- id: JAVA_COMMA_SPACING
+  description: "Commas should be followed by a space"
+  applies_to: punctuation
+  severity: minor
+  message: "Add a space after commas."
+
+# ===== Method naming =====
+- id: JAVA_METHOD_NAME_CAMELCASE_VERB
+  description: "Method names should be verbs written in camelCase"
+  applies_to: method
+  severity: minor
+  message: "Method name should be a verb in camelCase. Rename accordingly."
+
+# ===== Class naming =====
+- id: JAVA_CLASS_NAME_PASCALCASE
+  description: "Class names should use PascalCase"
+  applies_to: class
+  severity: minor
+  message: "Class name should be in PascalCase."
+
+# ===== Boolean variable naming =====
+- id: JAVA_BOOLEAN_VARIABLE_PREFIX
+  description: "Boolean variable names should start with 'is' or 'has'"
+  applies_to: variable
+  severity: minor
+  message: "Boolean variable should start with 'is' or 'has'. Rename accordingly."
+
+# ===== Constant naming =====
+- id: JAVA_CONSTANT_ALL_CAPS
+  description: "Constants should be named using ALL_CAPS with underscores"
+  applies_to: constant
+  severity: minor
+  message: "Constant names should be in ALL_CAPS with words separated by underscores."
+
+# ===== Modifier order =====
+- id: JAVA_MODIFIER_ORDER
+  description: "Visibility modifiers should appear before other modifiers"
+  applies_to: modifier
+  severity: minor
+  message: "Visibility modifiers should come before other modifiers."
+
+# ===== Line hygiene =====
+- id: JAVA_TRAILING_WHITESPACE
+  description: "Lines should not contain trailing whitespace"
+  applies_to: line
+  severity: info
+  message: "Remove trailing whitespace."
+
+- id: JAVA_FILE_END_NEWLINE
+  description: "Files should end with a newline"
+  applies_to: file
+  severity: info
+  message: "File should end with a newline."
+
+- id: JAVA_LINE_LENGTH
+  description: "Lines should not exceed 120 characters"
+  applies_to: line
+  severity: minor
+  message: "Line exceeds the recommended maximum length of 120 characters."
+# ===== Statements =====
+- id: JAVA_ONE_STATEMENT_PER_LINE
+  description: "Each line should contain at most one statement"
+  applies_to: line
+  severity: minor
+  message: "Only one statement should appear per line."
+
+# ===== Imports =====
+- id: JAVA_IMPORTS_ORDER
+  description: "Imports should be ordered alphabetically"
+  applies_to: import
+  severity: minor
+  message: "Imports should be ordered alphabetically."
