@@ -122,6 +122,200 @@ def check_indentation(file_path: str, code: str, rule: Rule):
 
         if stripped.endswith("{"):
             indent_level += 1
+    return comments
+
+# ---------- Class naming ----------
+def check_class_naming(file_path: str, code: str, rule: Rule):
+    comments = []
+    pattern = re.compile(r'\bclass\s+([a-zA-Z_][a-zA-Z0-9_]*)')
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        match = pattern.search(line)
+        if match:
+            name = match.group(1)
+            if not name[0].isupper() or "_" in name:
+                comments.append(
+                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                )
+    return comments
+
+
+# ---------- Method naming ----------
+def check_method_naming(file_path: str, code: str, rule: Rule):
+    comments = []
+    pattern = re.compile(r'(public|private|protected)\s+[\w<>\[\]]+\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(')
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        match = pattern.search(line)
+        if match:
+            name = match.group(2)
+            if name[0].isupper() or "_" in name:
+                comments.append(
+                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                )
+    return comments
+
+
+# ---------- Boolean variable naming ----------
+def check_boolean_naming(file_path: str, code: str, rule: Rule):
+    comments = []
+    pattern = re.compile(r'\bboolean\s+([a-zA-Z_][a-zA-Z0-9_]*)')
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        match = pattern.search(line)
+        if match:
+            name = match.group(1)
+            if not (name.startswith("is") or name.startswith("has")):
+                comments.append(
+                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                )
+    return comments
+
+# ---------- Else on same line as closing brace ----------
+def check_else_same_line(file_path, code, rule):
+    comments = []
+    lines = code.splitlines()
+
+    for i in range(len(lines) - 1):
+        if lines[i].strip() == "}" and lines[i + 1].strip().startswith("else"):
+            comments.append(
+                StyleComment(file_path, i + 2, rule.id, rule.message, rule.severity)
+            )
+    return comments
+
+# ---------- Empty block detection ----------
+def check_empty_block(file_path, code, rule):
+    comments = []
+    lines = code.splitlines()
+
+    for i in range(len(lines) - 1):
+        if lines[i].strip().endswith("{") and lines[i + 1].strip() == "}":
+            comments.append(
+                StyleComment(file_path, i + 1, rule.id, rule.message, rule.severity)
+            )
+    return comments
+
+# ---------- Multiple variable declaration detection ----------
+def check_multiple_var_declaration(file_path, code, rule):
+    comments = []
+    pattern = re.compile(r'\b(int|double|float|String|boolean|char)\s+\w+\s*,\s*\w+')
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        if pattern.search(line):
+            comments.append(
+                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+            )
+    return comments
+
+# ---------- Magic number detection ----------
+def check_magic_numbers(file_path, code, rule):
+    comments = []
+    pattern = re.compile(r'(?<!\w)(-?\d+)(?!\w)')
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        for match in pattern.findall(line):
+            if match not in {"0", "1", "-1"}:
+                comments.append(
+                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                )
+                break
+    return comments
+
+# ---------- Tabs used for indentation ----------
+def check_tabs_used(file_path, code, rule):
+    comments = []
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        if "\t" in line:
+            comments.append(
+                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+            )
+    return comments
+
+# ---------- Constant naming ----------
+def check_constant_all_caps(file_path: str, code: str, rule: Rule):
+    comments = []
+    pattern = re.compile(
+        r'\b(static\s+final|final\s+static)\s+[\w<>\[\]]+\s+([A-Za-z_][A-Za-z0-9_]*)'
+    )
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        match = pattern.search(line)
+        if match:
+            name = match.group(2)
+            if not name.isupper():
+                comments.append(
+                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                )
+    return comments
+
+# ---------- Modifier order ----------
+def check_modifier_order(file_path: str, code: str, rule: Rule):
+    comments = []
+
+    # Only care about lines with multiple modifiers
+    modifier_pattern = re.compile(
+        r'\b(public|protected|private)\b.*\b(abstract|static|final)\b|'
+        r'\b(abstract)\b.*\b(static|final)\b|'
+        r'\b(static)\b.*\b(final)\b'
+    )
+
+    bad_order_patterns = [
+        re.compile(r'\b(static|final)\s+(public|protected|private)\b'),
+        re.compile(r'\b(static)\s+(abstract)\b'),
+        re.compile(r'\b(final)\s+(static)\b'),
+    ]
+
+    for i, line in enumerate(code.splitlines(), start=1):
+        for pat in bad_order_patterns:
+            if pat.search(line):
+                comments.append(
+                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                )
+                break
+
+    return comments
+
+# ---------- File end newline ----------
+def check_file_end_newline(file_path: str, code: str, rule: Rule):
+    comments = []
+
+    if not code.endswith(("\n", "\r\n")):
+        comments.append(
+            StyleComment(
+                file_path=file_path,
+                line_number=0,
+                rule_id=rule.id,
+                message=rule.message,
+                severity=rule.severity,
+            )
+        )
+
+    return comments
+
+# ---------- Imports order ----------
+def check_imports_order(file_path: str, code: str, rule: Rule):
+    comments = []
+    lines = code.splitlines()
+
+    imports = []
+    import_lines = []
+
+    for i, line in enumerate(lines, start=1):
+        if line.startswith("import "):
+            imports.append(line.strip())
+            import_lines.append(i)
+
+    if imports and imports != sorted(imports):
+        comments.append(
+            StyleComment(
+                file_path=file_path,
+                line_number=import_lines[0],
+                rule_id=rule.id,
+                message=rule.message,
+                severity=rule.severity,
+            )
+        )
 
     return comments
 
@@ -134,4 +328,16 @@ CHECKERS = {
     "JAVA_BRACE_SAME_LINE": check_brace_same_line,
     "JAVA_ONE_STATEMENT_PER_LINE": check_one_statement_per_line,
     "JAVA_INDENTATION": check_indentation,
+    "JAVA_CLASS_NAMING": check_class_naming,
+    "JAVA_METHOD_NAMING": check_method_naming,
+    "JAVA_BOOLEAN_NAMING": check_boolean_naming,
+    "JAVA_ELSE_SAME_LINE": check_else_same_line,
+    "JAVA_EMPTY_BLOCK": check_empty_block,
+    "JAVA_MULTIPLE_VAR_DECL": check_multiple_var_declaration,
+    "JAVA_MAGIC_NUMBERS": check_magic_numbers,
+    "JAVA_TABS_USED": check_tabs_used,
+    "JAVA_CONSTANT_ALL_CAPS": check_constant_all_caps,
+    "JAVA_MODIFIER_ORDER": check_modifier_order,
+    "JAVA_FILE_END_NEWLINE": check_file_end_newline,
+    "JAVA_IMPORTS_ORDER": check_imports_order
 }

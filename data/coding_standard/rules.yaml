@@ -11,6 +11,24 @@
   severity: minor
   message: "Method body should be indented."
 
+  id: JAVA_ELSE_SAME_LINE
+  description: "Else should appear on the same line as closing brace"
+  applies_to: control_statement
+  severity: minor
+  message: "'else' should be on the same line as the closing brace."
+
+  id: JAVA_TABS_USED
+  description: "Use spaces instead of tabs"
+  applies_to: whitespace
+  severity: info
+  message: "Use spaces instead of tabs for indentation."
+
+  id: JAVA_EMPTY_BLOCK
+  description: "Empty blocks should be avoided"
+  applies_to: block
+  severity: info
+  message: "Avoid empty blocks."
+
 # ===== Braces style =====
 - id: JAVA_BRACE_SAME_LINE
   description: "Opening braces should be on the same line as the declaration or statement"
@@ -32,21 +50,21 @@
   message: "Add a space after commas."
 
 # ===== Method naming =====
-- id: JAVA_METHOD_NAME_CAMELCASE_VERB
+- id: JAVA_METHOD_NAMING
   description: "Method names should be verbs written in camelCase"
   applies_to: method
   severity: minor
   message: "Method name should be a verb in camelCase. Rename accordingly."
 
 # ===== Class naming =====
-- id: JAVA_CLASS_NAME_PASCALCASE
+- id: JAVA_CLASS_NAMING
   description: "Class names should use PascalCase"
   applies_to: class
   severity: minor
   message: "Class name should be in PascalCase."
 
 # ===== Boolean variable naming =====
-- id: JAVA_BOOLEAN_VARIABLE_PREFIX
+- id: JAVA_BOOLEAN_NAMING
   description: "Boolean variable names should start with 'is' or 'has'"
   applies_to: variable
   severity: minor
@@ -84,6 +102,13 @@
   applies_to: line
   severity: minor
   message: "Line exceeds the recommended maximum length of 120 characters."
+
+  id: JAVA_MULTIPLE_VAR_DECL
+  description: "Declare only one variable per line"
+  applies_to: variable
+  severity: minor
+  message: "Declare only one variable per line."
+
 # ===== Statements =====
 - id: JAVA_ONE_STATEMENT_PER_LINE
   description: "Each line should contain at most one statement"
@@ -97,3 +122,10 @@
   applies_to: import
   severity: minor
   message: "Imports should be ordered alphabetically."
+
+  # ===== Magic numbers =====
+  id: JAVA_MAGIC_NUMBER
+  description: "Avoid magic numbers"
+  applies_to: literal
+  severity: info
+  message: "Avoid magic numbers; consider using a named constant."
