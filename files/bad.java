@@ -1,8 +1,8 @@
 public class myClass{
 public void RenderUI(){
-int result=computeResult();
+int a=1; int b=2;
 if(isValid){
-doSomething(); // comment longer than 120 characcters to test line length rule doSomething(); -- comment longer than 120 characters to test line length rule
+doSomething(); // Comment longer than usual to test line length checking functionality in the static analysis module of the code style reviewer tool.
 }
 }
 }
