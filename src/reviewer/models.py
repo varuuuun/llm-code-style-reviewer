@@ -8,6 +8,11 @@ class Severity(str, Enum):
     MAJOR = "major"
 
 
+class Source(str, Enum):
+    STATIC = "Static"
+    LLM = "LLM"
+
+
 @dataclass
 class StyleComment:
     file_path: str
@@ -15,3 +20,4 @@ class StyleComment:
     rule_id: str
     message: str
     severity: Severity
+    source: Source = Source.STATIC

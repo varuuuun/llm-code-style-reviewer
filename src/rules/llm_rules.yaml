@@ -1,0 +1,17 @@
+- id: LLM_METHOD_NAME_INTENT
+  description: "Check whether method names accurately describe their behavior"
+  applies_to: method
+  severity: minor
+  message: "Method name may not accurately reflect what the method does."
+
+- id: LLM_BOOLEAN_SEMANTICS
+  description: "Check whether boolean variable names clearly express a true/false condition"
+  applies_to: variable
+  severity: minor
+  message: "Boolean variable name may be semantically unclear."
+
+- id: LLM_METHOD_SINGLE_RESPONSIBILITY
+  description: "Check whether a method appears to do more than one thing"
+  applies_to: method
+  severity: major
+  message: "Method may be doing too much. Consider refactoring."
