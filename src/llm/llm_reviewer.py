@@ -31,12 +31,6 @@ class LLMReviewer:
 
         prompt = LLM_REVIEW_PROMPT.strip()
         response = self.client.review(prompt, code)
-        
-        # Debug: show raw response
-        print(f"\n[DEBUG] Raw LLM Response:")
-        print(f"---")
-        print(response)
-        print(f"---\n")
 
         if response.strip() == "No issues found.":
             return comments
