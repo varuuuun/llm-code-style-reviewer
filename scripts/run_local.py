@@ -7,6 +7,16 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.reviewer.pipeline import run_reviewer
 
 
+def severity_to_github_level(severity):
+    """Convert severity to GitHub annotation level"""
+    mapping = {
+        "info": "notice",
+        "minor": "warning",
+        "major": "error",
+    }
+    return mapping.get(severity.value, "notice")
+
+
 if __name__ == "__main__":
     path = sys.argv[1]
 
@@ -16,4 +26,6 @@ if __name__ == "__main__":
     comments = run_reviewer(path, code)
 
     for c in comments:
-        print(f"{c.file_path}:{c.line_number} [{c.severity}] [{c.source.value}] {c.message}")
+        level = severity_to_github_level(c.severity)
+        print(f"::{level} file={c.file_path},line={c.line_number}::{c.source.value} - {c.message}")
+        
