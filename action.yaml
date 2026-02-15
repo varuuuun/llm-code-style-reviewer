@@ -1,0 +1,69 @@
+name: "LLM Code Style Reviewer"
+description: "Hybrid Static + LLM-based Code Style Reviewer for Java files"
+author: "Your Name"
+
+inputs:
+  openai_api_key:
+    description: "OpenAI API Key"
+    required: false
+  gemini_api_key:
+    description: "Gemini API Key"
+    required: false
+  claude_api_key:
+    description: "Claude API Key"
+    required: false
+  base_branch:
+    description: "Base branch to diff against"
+    required: false
+    default: "main"
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r src/llm/requirements.txt
+      shell: bash
+
+    - name: Fetch base branch
+      run: |
+        git fetch origin ${{ inputs.base_branch }}
+      shell: bash
+
+    - name: Get changed Java files
+      id: changed_files
+      run: |
+        files=$(git diff --name-only origin/${{ inputs.base_branch }} | grep '\.java$' || true)
+
+        if [ -z "$files" ]; then
+          echo "No Java files changed."
+          echo "has_files=false" >> $GITHUB_OUTPUT
+        else
+          echo "Changed files:"
+          echo "$files"
+          echo "has_files=true" >> $GITHUB_OUTPUT
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$files" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        fi
+      shell: bash
+
+    - name: Run LLM Code Reviewer
+      if: steps.changed_files.outputs.has_files == 'true'
+      run: |
+        for file in ${{ steps.changed_files.outputs.files }}; do
+          echo "Reviewing $file"
+          python scripts/run_local.py "$file"
+        done
+      shell: bash
+      env:
+        OPENAI_API_KEY: ${{ inputs.openai_api_key }}
+        GEMINI_API_KEY: ${{ inputs.gemini_api_key }}
+        CLAUDE_API_KEY: ${{ inputs.claude_api_key }}
