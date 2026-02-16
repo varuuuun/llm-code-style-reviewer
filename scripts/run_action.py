@@ -29,6 +29,10 @@ def get_changed_java_files():
 
 
 def main():
+    subprocess.run(
+        ["git", "config", "--global", "--add", "safe.directory", "/github/workspace"],
+        check=False
+    )
     files = get_changed_java_files()
 
     if not files:
