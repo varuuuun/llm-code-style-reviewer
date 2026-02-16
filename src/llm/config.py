@@ -21,7 +21,7 @@ class LLMConfig:
     max_tokens: int = 1000
 
 
-def load_config(config_path: str = "config.yaml") -> LLMConfig:
+def load_config(config_path: str = "/action/config.yaml") -> LLMConfig:
     """
     Load LLM configuration from YAML file with environment variable overrides.
     

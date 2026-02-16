@@ -9,7 +9,7 @@ def should_send_to_llm(code: str, max_lines: int = 300) -> bool:
     return len(code.splitlines()) <= max_lines
 
 
-def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path: str = "config.yaml"):
+def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path: str = "/action/config.yaml"):
     """
     Run the code reviewer (static checks + optional LLM review).
     
@@ -26,7 +26,7 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
 
     # Try static rules if they exist
     try:
-        static_rules = load_rules("data/coding_standard/rules.yaml")
+        static_rules = load_rules("/action/data/coding_standard/rules.yaml")
         for rule in static_rules:
             checker = CHECKERS.get(rule.id)
             if checker:
@@ -38,7 +38,7 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
     # LLM-based semantic review
     if enable_llm:
         try:
-            llm_rules = load_rules("src/rules/llm_rules.yaml")
+            llm_rules = load_rules("/action/src/rules/llm_rules.yaml")
             llm_client = LLMClient(config_path=config_path)
             llm_reviewer = LLMReviewer(llm_client)
 
