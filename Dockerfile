@@ -1,9 +1,10 @@
 FROM python:3.11-slim
 
-WORKDIR /action
+# GitHub Actions expects /github/workspace to be the working directory
+WORKDIR /github/workspace
 
 # Copy entire action repository into container
-COPY . /action
+COPY . /github/workspace
 
 # Install dependencies
 RUN pip install --upgrade pip
