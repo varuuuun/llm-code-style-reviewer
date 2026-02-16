@@ -30,7 +30,11 @@ class LLMReviewer:
         comments = []
 
         prompt = LLM_REVIEW_PROMPT.strip()
-        response = self.client.review(prompt, code)
+        
+        # Add line numbers to code for LLM clarity
+        numbered_code = "\n".join(f"{i+1}: {line}" for i, line in enumerate(code.splitlines()))
+        
+        response = self.client.review(prompt, numbered_code)
 
         if response.strip() == "No issues found.":
             return comments
