@@ -44,7 +44,7 @@ def main():
     for file in files:
         print(f"Reviewing {file}")
         result = subprocess.run(
-            ["python", "scripts/run.py", file]
+            ["python", "/action/scripts/run.py", file]
         )
 
         if result.returncode != 0:
