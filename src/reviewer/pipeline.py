@@ -31,9 +31,9 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
             checker = CHECKERS.get(rule.id)
             if checker:
                 comments.extend(checker(file_path, code, rule))
-    except (FileNotFoundError, KeyError):
+    except (Exception) as e:
         # Static rules file doesn't exist or is misconfigured
-        pass
+        print(f"Warning: Static rule checks failed: {e}")
 
     # LLM-based semantic review
     if enable_llm:
