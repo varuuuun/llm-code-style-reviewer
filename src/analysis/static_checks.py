@@ -22,24 +22,62 @@ def check_line_length(file_path: str, code: str, rule: Rule, max_length: int = 1
     return comments
 
 # ---------- Assignment Operator Spacing ----------
-def check_assignment_operator_spacing(file_path: str, code: str, rule: Rule):
+def check_operator_spacing(file_path: str, code: str, rule: Rule):
     comments = []
-
-    pattern = re.compile(r'(?<![=!<>+\-*/])=(?![=])')
+    
+    # Matches: &&, ||, ==, !=, >=, <=, =, +=, -=, *=, /=, +, -, *, /, %, <, >
+    operator_pattern = re.compile(
+        r'(?P<op>&&|\|\||==|!=|>=|<=|[+\-*/%=<>]=?|[<>])'
+    )
 
     for idx, line in enumerate(code.splitlines(), start=1):
-        if pattern.search(line):
-            if " = " not in line:
+        clean_line = line.split('//')[0].split('/*')[0]
+        
+        for match in operator_pattern.finditer(clean_line):
+            op = match.group('op')
+            start, end = match.span()
+            
+            # --- 1. Filter: Increment/Decrement (++, --) ---
+            if op in '+-' and (
+                (end < len(clean_line) and clean_line[end] == op) or 
+                (start > 0 and clean_line[start-1] == op)
+            ):
+                continue
+            
+            # --- 2. Filter: Unary Minus (e.g., -5 or return -1) ---
+            if op == '-' and (start == 0 or re.search(r'[=(,;]\s*$', clean_line[:start])):
+                continue
+
+            # --- 3. Filter: Generics Protection (e.g., List<String>) ---
+            if op in '<>':
+                # Check if touching an uppercase letter (Type name) or another bracket
+                # Example: Map<String, Integer> or List<List<String>>
+                touching_type = False
+                if start > 0 and (clean_line[start-1].isupper() or clean_line[start-1] in '<>'):
+                    touching_type = True
+                if end < len(clean_line) and (clean_line[end].isupper() or clean_line[end] in '<>'):
+                    touching_type = True
+                
+                if touching_type:
+                    continue
+
+            # --- 4. Spacing Check ---
+            # Binary operators must have a space before AND after
+            has_space_before = (start > 0 and clean_line[start-1] == ' ')
+            has_space_after = (end < len(clean_line) and clean_line[end] == ' ')
+            
+            if not (has_space_before and has_space_after):
                 comments.append(
                     StyleComment(
                         file_path=file_path,
                         line_number=idx,
-                        position=line.index("=") + 1,
+                        position=start + 1,
                         rule_id=rule.id,
-                        message=rule.message,
+                        message=f"{rule.message} (Found '{op}')",
                         severity=rule.severity,
                     )
                 )
+                break # One warning per line is usually enough to avoid noise
 
     return comments
 
@@ -104,7 +142,7 @@ def check_one_statement_per_line(file_path: str, code: str, rule: Rule):
 
     for i, line in enumerate(code.splitlines(), start=1):
         stripped = line.strip()
-        
+
         if stripped.startswith("for") and "(" in stripped:
             continue
 
@@ -336,7 +374,7 @@ def check_imports_order(file_path: str, code: str, rule: Rule):
 
 CHECKERS = {
     "JAVA_LINE_LENGTH": check_line_length,
-    "JAVA_OPERATOR_SPACING_ASSIGNMENT": check_assignment_operator_spacing,
+    "JAVA_OPERATOR_SPACING": check_operator_spacing,
     "JAVA_IF_SPACING": check_if_spacing,
     "JAVA_COMMA_SPACING": check_comma_spacing,
     "JAVA_TRAILING_WHITESPACE": check_trailing_whitespace,

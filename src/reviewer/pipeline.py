@@ -51,7 +51,6 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
     commented_line = False
     lines = code.splitlines()
     for line in range(len(lines)):
-        print(str(line) + ": " + lines[line])
         if lines[line].find("//") != -1:
             commented_lines[line+1] = [lines[line].index("//"), len(lines[line])]
         elif lines[line].find("/*") != -1:
@@ -73,7 +72,6 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
             if comment_start <= comments[i].position <= comment_end:
                 to_ignore.append(i)
     
-    print(to_ignore)
     for i in sorted(to_ignore, reverse=True):
         del comments[i]
 
