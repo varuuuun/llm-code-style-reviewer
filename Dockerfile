@@ -13,6 +13,6 @@ WORKDIR /action
 COPY . /action
 
 RUN pip install --upgrade pip
-RUN pip install -r /action/src/llm/requirements.txt
+RUN pip install -r /action/requirements.txt
 
 ENTRYPOINT ["python", "/action/scripts/run_action.py"]
