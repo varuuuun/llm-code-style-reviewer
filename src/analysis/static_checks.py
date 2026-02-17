@@ -103,6 +103,11 @@ def check_one_statement_per_line(file_path: str, code: str, rule: Rule):
     comments = []
 
     for i, line in enumerate(code.splitlines(), start=1):
+        stripped = line.strip()
+        
+        if stripped.startswith("for") and "(" in stripped:
+            continue
+
         if line.count(";") > 1:
             comments.append(
                 StyleComment(file_path, i, line.index(";") + 1, rule.id, rule.message, rule.severity)
