@@ -51,7 +51,7 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
         comments.append(
             StyleComment(
                 file_path=file_path,
-                line_number=0,
+                line_number=1,
                 rule_id="NO_ISSUES",
                 message="No violations found.",
                 severity=Severity.INFO,
