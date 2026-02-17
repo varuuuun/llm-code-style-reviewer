@@ -247,13 +247,13 @@ def check_empty_block(file_path, code, rule):
 # ---------- Multiple variable declaration detection ----------
 def check_multiple_var_declaration(file_path, code, rule):
     comments = []
-    pattern = re.compile(r'\b(int|double|float|String|boolean|char)\s+\w+\s*(,)\s*\w+(?=[^()]*;)')
+    pattern = re.compile(r'\b(int|double|float|String|boolean|char)\s+\w+.*(,).*(?=;)')
 
     for i, line in enumerate(code.splitlines(), start=1):
         match = pattern.search(line)
         if match:
             comments.append(
-                StyleComment(file_path, i, match.start() + 1, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, match.start(2) + 1, rule.id, rule.message, rule.severity)
             )
     return comments
 
