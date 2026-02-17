@@ -4,7 +4,6 @@ import os
 # Add parent directory to path so we can import src
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 from src.reviewer.pipeline import run_reviewer
 
 
@@ -20,6 +19,7 @@ def severity_to_github_level(severity):
 
 if __name__ == "__main__":
     path = sys.argv[1]
+    print(f"Running reviewer on {path}")
 
     with open(path, "r") as f:
         code = f.read()
