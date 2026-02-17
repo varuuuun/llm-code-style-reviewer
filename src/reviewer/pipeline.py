@@ -60,4 +60,3 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
 
     return comments
 
-    return comments

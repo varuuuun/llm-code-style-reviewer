@@ -2,14 +2,14 @@ import os
 import subprocess
 import sys
 
-BASE_BRANCH = os.getenv("BASE_BRANCH", "main")
+BASE_BRANCH = os.getenv("BASE_BRANCH") or os.getenv("GITHUB_BASE_REF") or "main"
 
 def get_changed_java_files():
     try:
         subprocess.run(["git", "fetch", "origin", BASE_BRANCH], check=True)
 
         result = subprocess.run(
-            ["git", "diff", "--name-only", f"origin/{BASE_BRANCH}"],
+            ["git", "diff", "--name-only", f"origin/{BASE_BRANCH}...HEAD"],
             capture_output=True,
             text=True,
             check=True
