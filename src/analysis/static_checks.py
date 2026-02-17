@@ -74,12 +74,16 @@ def check_trailing_whitespace(file_path: str, code: str, rule: Rule):
     comments = []
 
     for i, line in enumerate(code.splitlines(), start=1):
-        if line.rstrip() != line:
+        # 1. stripped_line removes all whitespace from both ends
+        stripped_line = line.strip()
+        
+        # 2. Check if the line has actual code AND ends with whitespace
+        # This ignores lines that are entirely whitespace (empty lines)
+        if stripped_line and line.rstrip() != line:
             comments.append(
                 StyleComment(file_path, i, len(line.rstrip()) + 1, rule.id, rule.message, rule.severity)
             )
     return comments
-
 
 # ---------- Brace on same line ----------
 def check_brace_same_line(file_path: str, code: str, rule: Rule):
@@ -200,7 +204,7 @@ def check_empty_block(file_path, code, rule):
 # ---------- Multiple variable declaration detection ----------
 def check_multiple_var_declaration(file_path, code, rule):
     comments = []
-    pattern = re.compile(r'\b(int|double|float|String|boolean|char)\s+\w+\s*,\s*\w+')
+    pattern = re.compile(r'\b(int|double|float|String|boolean|char)\s+\w+\s*(,)\s*\w+(?=[^()]*;)')
 
     for i, line in enumerate(code.splitlines(), start=1):
         match = pattern.search(line)
