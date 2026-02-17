@@ -96,9 +96,5 @@ if __name__ == "__main__":
 
     post_github_review(comments)
 
-    for c in comments:
-        level = severity_to_github_level(c.severity)
-        print(f"::{level} file={c.file_path},line={c.line_number}::{c.source.value} - {c.message}")
-        
     if any(c.severity == "major" for c in comments):
         sys.exit(1)  # Exit with error code if there are major issues
