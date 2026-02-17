@@ -9,7 +9,7 @@ This action:
 -   Runs configurable static checks\
 -   Sends code to an LLM provider (currently OpenAI) for deeper
     analysis\
--   Outputs structured review feedback in GitHub Actions logs
+-   Outputs structured review feedback as PR comments
 
 ------------------------------------------------------------------------
 
@@ -45,16 +45,21 @@ on:
 jobs:
   review:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Run LLM Code Reviewer
-        uses: varuuuun/llm-code-style-reviewer@v1
+      - uses: varuuuun/llm-code-style-reviewer@v1.0.0
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+
 ```
 
 ------------------------------------------------------------------------
@@ -86,7 +91,7 @@ Settings → Secrets and variables → Actions → Repository secrets
 
 6.  Sends content to LLM provider for structured review\
 
-7.  Prints warnings in workflow logs
+7.  Displays feedback as comments in PR
 
 ------------------------------------------------------------------------
 
@@ -103,15 +108,6 @@ Located at:
 Located at:
 
     src/rules/llm_rules.yaml
-
-### Local Config (For Local Testing)
-
-    config.yaml
-
--   Used for local testing when GitHub Secrets are not available\
--   Stores API keys locally\
--   Committed version contains placeholder values only\
--   Not used inside GitHub Actions (Actions use repository secrets)
 
 ------------------------------------------------------------------------
 
@@ -141,7 +137,6 @@ Located at:
     │   ├── llm/
     │   └── rules/
     ├── data/
-    ├── config.yaml
     ├── requirements.txt
     └── README.md
 
@@ -167,25 +162,6 @@ Ensure:
 
 -   You are comfortable sending code externally\
 -   You understand API usage may incur cost
-
-------------------------------------------------------------------------
-
-## 🧪 Local Testing
-
-1. Add your OpenAI API key to `config.yaml`:
-
-``` yaml
-provider: openai
-openai:
-  model: gpt-4
-  api_key: your-api-key-here
-```
-
-2. Run the reviewer on a file:
-
-``` bash
-python scripts.run /path/to/your/file.java
-```
 
 ------------------------------------------------------------------------
 
