@@ -6,12 +6,6 @@ inputs:
   openai_api_key:
     description: "OpenAI API Key"
     required: false
-  gemini_api_key:
-    description: "Gemini API Key"
-    required: false
-  claude_api_key:
-    description: "Claude API Key"
-    required: false
   base_branch:
     description: "Base branch to diff against"
     required: false
@@ -23,5 +17,3 @@ runs:
   env:
     BASE_BRANCH: ${{ inputs.base_branch }}
     OPENAI_API_KEY: ${{ inputs.openai_api_key }}
-    GEMINI_API_KEY: ${{ inputs.gemini_api_key }}
-    CLAUDE_API_KEY: ${{ inputs.claude_api_key }}

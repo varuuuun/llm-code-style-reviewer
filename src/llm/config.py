@@ -26,10 +26,9 @@ def load_config(config_path: str = "/action/config.yaml") -> LLMConfig:
     Load LLM configuration from YAML file with environment variable overrides.
     
     Environment variables:
-    - LLM_PROVIDER: Override provider (openai, gemini, claude, local)
-    - {PROVIDER}_API_KEY: e.g., OPENAI_API_KEY, GEMINI_API_KEY, CLAUDE_API_KEY
-    - {PROVIDER}_MODEL: e.g., OPENAI_MODEL, GEMINI_MODEL, etc.
-    - {PROVIDER}_BASE_URL: For local LLM
+    - LLM_PROVIDER: Override provider (openai)
+    - {PROVIDER}_API_KEY: e.g., OPENAI_API_KEY
+    - {PROVIDER}_MODEL: e.g., OPENAI_MODEL
     
     Args:
         config_path: Path to config.yaml file
@@ -75,7 +74,7 @@ def load_config(config_path: str = "/action/config.yaml") -> LLMConfig:
     if not llm_config.model:
         raise ValueError(f"Model not specified for provider '{active_provider}'")
     
-    if active_provider in ["openai", "gemini", "claude"]:
+    if active_provider in ["openai"]:
         if not llm_config.api_key or "placeholder" in llm_config.api_key.lower():
             raise ValueError(
                 f"API key not configured for {active_provider}. "
