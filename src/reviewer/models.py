@@ -17,6 +17,7 @@ class Source(str, Enum):
 class StyleComment:
     file_path: str
     line_number: int
+    position: int
     rule_id: str
     message: str
     severity: Severity

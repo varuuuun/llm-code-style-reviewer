@@ -12,6 +12,7 @@ def check_line_length(file_path: str, code: str, rule: Rule, max_length: int = 1
                 StyleComment(
                     file_path=file_path,
                     line_number=idx,
+                    position=max_length + 1,
                     rule_id=rule.id,
                     message=rule.message,
                     severity=rule.severity,
@@ -33,6 +34,7 @@ def check_assignment_operator_spacing(file_path: str, code: str, rule: Rule):
                     StyleComment(
                         file_path=file_path,
                         line_number=idx,
+                        position=line.index("=") + 1,
                         rule_id=rule.id,
                         message=rule.message,
                         severity=rule.severity,
@@ -49,7 +51,7 @@ def check_if_spacing(file_path: str, code: str, rule: Rule):
     for i, line in enumerate(code.splitlines(), start=1):
         if pattern.search(line):
             comments.append(
-                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, line.index("if(") + 1, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -62,7 +64,7 @@ def check_comma_spacing(file_path: str, code: str, rule: Rule):
     for i, line in enumerate(code.splitlines(), start=1):
         if pattern.search(line):
             comments.append(
-                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, line.index(",") + 1, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -74,7 +76,7 @@ def check_trailing_whitespace(file_path: str, code: str, rule: Rule):
     for i, line in enumerate(code.splitlines(), start=1):
         if line.rstrip() != line:
             comments.append(
-                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, len(line.rstrip()) + 1, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -87,7 +89,7 @@ def check_brace_same_line(file_path: str, code: str, rule: Rule):
     for i in range(len(lines) - 1):
         if lines[i].strip().endswith((")", "else")) and lines[i + 1].strip() == "{":
             comments.append(
-                StyleComment(file_path, i + 2, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i + 2, 0, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -99,7 +101,7 @@ def check_one_statement_per_line(file_path: str, code: str, rule: Rule):
     for i, line in enumerate(code.splitlines(), start=1):
         if line.count(";") > 1:
             comments.append(
-                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, line.index(";") + 1, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -117,7 +119,7 @@ def check_indentation(file_path: str, code: str, rule: Rule):
 
         if stripped and not line.startswith(" " * (indent_level * 4)):
             comments.append(
-                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, 0, rule.id, rule.message, rule.severity)
             )
 
         if stripped.endswith("{"):
@@ -135,7 +137,7 @@ def check_class_naming(file_path: str, code: str, rule: Rule):
             name = match.group(1)
             if not name[0].isupper() or "_" in name:
                 comments.append(
-                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                    StyleComment(file_path, i, match.start() + 1, rule.id, rule.message, rule.severity)
                 )
     return comments
 
@@ -151,7 +153,7 @@ def check_method_naming(file_path: str, code: str, rule: Rule):
             name = match.group(2)
             if name[0].isupper() or "_" in name:
                 comments.append(
-                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                    StyleComment(file_path, i, match.start() + 1, rule.id, rule.message, rule.severity)
                 )
     return comments
 
@@ -167,7 +169,7 @@ def check_boolean_naming(file_path: str, code: str, rule: Rule):
             name = match.group(1)
             if not (name.startswith("is") or name.startswith("has")):
                 comments.append(
-                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                    StyleComment(file_path, i, match.start() + 1, rule.id, rule.message, rule.severity)
                 )
     return comments
 
@@ -179,7 +181,7 @@ def check_else_same_line(file_path, code, rule):
     for i in range(len(lines) - 1):
         if lines[i].strip() == "}" and lines[i + 1].strip().startswith("else"):
             comments.append(
-                StyleComment(file_path, i + 2, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i + 2, 0, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -191,7 +193,7 @@ def check_empty_block(file_path, code, rule):
     for i in range(len(lines) - 1):
         if lines[i].strip().endswith("{") and lines[i + 1].strip() == "}":
             comments.append(
-                StyleComment(file_path, i + 1, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i + 1, 0, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -201,9 +203,10 @@ def check_multiple_var_declaration(file_path, code, rule):
     pattern = re.compile(r'\b(int|double|float|String|boolean|char)\s+\w+\s*,\s*\w+')
 
     for i, line in enumerate(code.splitlines(), start=1):
-        if pattern.search(line):
+        match = pattern.search(line)
+        if match:
             comments.append(
-                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, match.start() + 1, rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -216,7 +219,7 @@ def check_magic_numbers(file_path, code, rule):
         for match in pattern.findall(line):
             if match not in {"0", "1", "-1"}:
                 comments.append(
-                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                    StyleComment(file_path, i, match.start(), rule.id, rule.message, rule.severity)
                 )
                 break
     return comments
@@ -228,7 +231,7 @@ def check_tabs_used(file_path, code, rule):
     for i, line in enumerate(code.splitlines(), start=1):
         if "\t" in line:
             comments.append(
-                StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                StyleComment(file_path, i, line.index("\t"), rule.id, rule.message, rule.severity)
             )
     return comments
 
@@ -245,7 +248,7 @@ def check_constant_all_caps(file_path: str, code: str, rule: Rule):
             name = match.group(2)
             if not name.isupper():
                 comments.append(
-                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                    StyleComment(file_path, i, match.start() + 1, rule.id, rule.message, rule.severity)
                 )
     return comments
 
@@ -268,9 +271,10 @@ def check_modifier_order(file_path: str, code: str, rule: Rule):
 
     for i, line in enumerate(code.splitlines(), start=1):
         for pat in bad_order_patterns:
-            if pat.search(line):
+            match = pat.search(line)
+            if match:
                 comments.append(
-                    StyleComment(file_path, i, rule.id, rule.message, rule.severity)
+                    StyleComment(file_path, i, match.start() + 1, rule.id, rule.message, rule.severity)
                 )
                 break
 
@@ -284,7 +288,8 @@ def check_file_end_newline(file_path: str, code: str, rule: Rule):
         comments.append(
             StyleComment(
                 file_path=file_path,
-                line_number=0,
+                line_number=len(code.splitlines()) + 1,
+                position=0,
                 rule_id=rule.id,
                 message=rule.message,
                 severity=rule.severity,
@@ -311,6 +316,7 @@ def check_imports_order(file_path: str, code: str, rule: Rule):
             StyleComment(
                 file_path=file_path,
                 line_number=import_lines[0],
+                position=0,
                 rule_id=rule.id,
                 message=rule.message,
                 severity=rule.severity,

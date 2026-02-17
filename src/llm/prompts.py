@@ -11,7 +11,7 @@ DO NOT comment on:
 - Static analysis issues (those are caught separately)
 
 RESPOND in ONLY this format:
-- If issues found, list them as: Line <number>: <issue>
+- If issues found, list them as: Line <number>: <position>: <issue>
 - If no issues found, respond: No issues found.
 
 Be concise and specific.

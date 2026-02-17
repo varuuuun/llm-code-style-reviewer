@@ -47,11 +47,42 @@ def run_reviewer(file_path: str, code: str, enable_llm: bool = True, config_path
         except Exception as e:
             print(f"Warning: LLM review failed: {e}")
 
+    commented_lines = {}
+    commented_line = False
+    lines = code.splitlines()
+    for line in range(len(lines)):
+        print(str(line) + ": " + lines[line])
+        if lines[line].find("//") != -1:
+            commented_lines[line+1] = [lines[line].index("//"), len(lines[line])]
+        elif lines[line].find("/*") != -1:
+            if lines[line].find("*/") != -1:
+                commented_lines[line+1] = [lines[line].index("/*"), lines[line].index("*/") + 2]
+            else:
+                commented_lines[line+1] = [lines[line].index("/*"), len(lines[line])]
+                commented_line = True
+        elif commented_line and lines[line].find("*/") != -1:
+            commented_lines[line+1] = [0, lines[line].index("*/") + 2]
+            commented_line = False
+        elif commented_line:
+            commented_lines[line+1] = [0, len(lines[line])]
+
+    to_ignore = []
+    for i in range(len(comments)):
+        if comments[i].line_number in commented_lines:
+            comment_start, comment_end = commented_lines[comments[i].line_number]
+            if comment_start <= comments[i].position <= comment_end:
+                to_ignore.append(i)
+    
+    print(to_ignore)
+    for i in sorted(to_ignore, reverse=True):
+        del comments[i]
+
     if len(comments) == 0:
         comments.append(
             StyleComment(
                 file_path=file_path,
                 line_number=1,
+                position=0,
                 rule_id="NO_ISSUES",
                 message="No violations found.",
                 severity=Severity.INFO,

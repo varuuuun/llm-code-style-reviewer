@@ -44,8 +44,9 @@ class LLMReviewer:
                 continue
 
             try:
-                prefix, message = line.split(":", 1)
+                prefix, position, message = line.split(":", 2)
                 line_number = int(prefix.replace("Line", "").strip())
+                position = int(position.strip())
             except ValueError:
                 continue
 
@@ -58,6 +59,7 @@ class LLMReviewer:
                     StyleComment(
                         file_path=file_path,
                         line_number=line_number,
+                        position=position,
                         rule_id=rule_id,
                         message=message.strip(),
                         severity=matching_rule.severity,
