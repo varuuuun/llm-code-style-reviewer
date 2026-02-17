@@ -11,19 +11,19 @@
   severity: minor
   message: "Method body should be indented."
 
-  id: JAVA_ELSE_SAME_LINE
+- id: JAVA_ELSE_SAME_LINE
   description: "Else should appear on the same line as closing brace"
   applies_to: control_statement
   severity: minor
   message: "'else' should be on the same line as the closing brace."
 
-  id: JAVA_TABS_USED
+- id: JAVA_TABS_USED
   description: "Use spaces instead of tabs"
   applies_to: whitespace
   severity: info
   message: "Use spaces instead of tabs for indentation."
 
-  id: JAVA_EMPTY_BLOCK
+- id: JAVA_EMPTY_BLOCK
   description: "Empty blocks should be avoided"
   applies_to: block
   severity: info
@@ -123,8 +123,7 @@
   severity: minor
   message: "Imports should be ordered alphabetically."
 
-  # ===== Magic numbers =====
-  id: JAVA_MAGIC_NUMBER
+- id: JAVA_MAGIC_NUMBER
   description: "Avoid magic numbers"
   applies_to: literal
   severity: info
