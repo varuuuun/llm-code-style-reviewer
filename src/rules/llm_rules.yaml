@@ -13,5 +13,5 @@
 - id: LLM_METHOD_SINGLE_RESPONSIBILITY
   description: "Check whether a method appears to do more than one thing"
   applies_to: method
-  severity: major
+  severity: minor
   message: "Method may be doing too much. Consider refactoring."
